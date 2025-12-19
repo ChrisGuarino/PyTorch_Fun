@@ -122,4 +122,57 @@ Epoch 80: Loss: 0.0505, W= 2.031, b= 0.730
 Epoch 90: Loss: 0.0383, W= 2.032, b= 0.764
 
 Final Parameters:  W= 2.031, b= 0.790
-True Parameters: W=2.000, b=1.000'''
+True Parameters: W=2.000, b=1.000''' 
+
+ #The input has 1 feature and the output has 1 value - Good place to start.
+D_in = 1
+D_out = 1
+#Create the Linear Layer - simply a linear regression
+linear_layer = torch.nn.Linear(in_features=D_in, out_features=D_out)
+#Lets take a look inside the parameters it has created
+print((f"Layer's Weight (W): {linear_layer.weight}\n"))
+print((f"Layer's Bias (b): {linear_layer.bias}\n"))
+#This is the forward pass. You can use it just like a function.
+#(Assume X is a tensor of shape [10,1] from previous chapters)
+y_hat_nn = linear_layer(X)
+print(f"Output of nn.Linear (first 3 rows):\n {y_hat_nn[:3]}")
+#Activation Functions - These decided which neurons turn on or off. 
+# If you just hadd a bunhc nof linear layers stacked on top of each other you would end 
+# up with just a large linear regression. Activation functions add non-linearity between 
+# linear layers. 
+
+# In this case we will use a Rectified Linear Unit (RELU) Activation Function
+relu = torch.nn.ReLU()
+sample_data = torch.tensor([-2.0,-0.5,0.0,0.5,2.0])
+activated_data = relu(sample_data)
+
+print(f"Original Data: {sample_data}\n")
+print(f"Data after ReLu: {activated_data}\n")
+'''Output: 
+Original Data: tensor([-2.0000, -0.5000,  0.0000,  0.5000,  2.0000])
+Data after ReLu: tensor([0.0000, 0.0000, 0.0000, 0.5000, 2.0000])'''
+#ReLu will flatten any data below 0 by default and activate (slope) above 0. 
+
+#GeLu, Gaussian Error Linear Unit - this will not just flatten data below 0 to 0. It 
+# will heavily push the data there before and after 0 (pivot point) a smother less binary 
+# version of ReLu 
+gelu = torch.nn.GELU()
+sample_data = torch.tensor([-2.0,-0.5,0.0,0.5,2.0])
+activated_data = gelu(sample_data)
+
+print(f"Original Data: {sample_data}\n")
+print(f"Data after GeLu: {activated_data}\n") 
+'''Output: 
+Original Data: tensor([-2.0000, -0.5000,  0.0000,  0.5000,  2.0000])
+Data after GeLu: tensor([-0.0455, -0.1543,  0.0000,  0.3457,  1.9545])''' 
+
+#Softmax - Used on the final output layer normally for classification tasks 
+# Converts logits (raw parameter outputs) into a probability distribution. 
+# What this means is that all outputs are forced to be between 0 and 1 and all sum to 1. 
+softmax = torch.nn.Softmax(dim=-1)
+#Simulated raw data
+logits = torch.tensor([[1.0,3.0,0.5,1.5],[-1.0,2.0,1.0,0.0]])
+probabilities = softmax(logits)
+
+print(f"Output Probabilities: {probabilities}\n")
+print(f"Sum of probabilities: {probabilities[0].sum()}\n")
